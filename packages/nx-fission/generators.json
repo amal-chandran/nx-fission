@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "name": "nx-fission",
+  "version": "0.0.1",
+  "generators": {
+    "nx-fission": {
+      "factory": "./src/generators/nx-fission/generator",
+      "schema": "./src/generators/nx-fission/schema.json",
+      "description": "nx-fission generator"
+    }
+  }
+}

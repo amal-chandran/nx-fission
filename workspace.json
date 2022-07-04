@@ -1,0 +1,8 @@
+{
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json",
+  "version": 2,
+  "projects": {
+    "nx-fission": "packages/nx-fission",
+    "nx-fission-e2e": "e2e/nx-fission-e2e"
+  }
+}

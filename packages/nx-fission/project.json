@@ -1,0 +1,60 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/nx-fission/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/nx-fission",
+        "main": "packages/nx-fission/src/index.ts",
+        "tsConfig": "packages/nx-fission/tsconfig.lib.json",
+        "assets": [
+          "packages/nx-fission/*.md",
+          {
+            "input": "./packages/nx-fission/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/nx-fission/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/nx-fission",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./packages/nx-fission",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/nx-fission/**/*.ts",
+          "packages/nx-fission/generators.json",
+          "packages/nx-fission/executors.json",
+          "packages/nx-fission/package.json"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/nx-fission"],
+      "options": {
+        "jestConfig": "packages/nx-fission/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
