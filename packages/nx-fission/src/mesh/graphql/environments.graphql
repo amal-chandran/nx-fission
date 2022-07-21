@@ -1,0 +1,32 @@
+query getEnvironments {
+  getEnvironments {
+    metadata {
+      name
+    }
+  }
+}
+query getEnvironment($environment: String!) {
+  getEnvironment(environment: $environment) {
+    metadata {
+      name
+    }
+  }
+}
+mutation deleteEnvironment($environment: String!) {
+  deleteEnvironment(environment: $environment)
+}
+# mutation createEnvironments($object: V1EnvironmentInput!) {
+#   createEnvironments(v1EnvironmentInput: $object) {
+#     name
+#   }
+# }
+mutation createEnvironments($object: environment_Input) {
+  createEnvironments(input: $object) {
+    name
+    namespace
+    uid
+    resourceVersion
+    generation
+    creationTimestamp
+  }
+}

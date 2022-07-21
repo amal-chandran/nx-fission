@@ -1,0 +1,27 @@
+sources:
+  - name: Fission
+    handler:
+      openapi:
+        baseUrl: 'http://localhost:8001/api/v1/namespaces/fission/services/controller:80/proxy/'
+        source: 'fission-spec.yaml'
+        operationIdFieldNames: true
+      transforms:
+        - filterSchema:
+          mode: bare | wrap
+          filters:
+            - Mutation.!createEnvironments
+  - name: FissionCustomMap
+    handler:
+      jsonSchema:
+        baseUrl: http://localhost:8001/api/v1/namespaces/fission/services/controller:80/proxy/
+        operations:
+          - type: Mutation
+            field: createEnvironments
+            path: /v2/environments
+            method: POST
+            requestTypeName: environment
+            requestSample: ./json-samples/create-environment/create-environment.request.json
+            responseTypeName: environment_Output
+            responseSample: ./json-samples/create-environment/create-environment.response.json
+documents:
+  - './graphql/**/*.graphql'

@@ -1,0 +1,68 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  dummy: String
+}
+
+type Mutation {
+  createEnvironments(input: environment_Input): environment_Output
+}
+
+type environment_Output {
+  name: String
+  namespace: String
+  uid: String
+  resourceVersion: String
+  generation: Int
+  creationTimestamp: DateTime
+}
+
+"A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."
+scalar DateTime
+
+input environment_Input {
+  apiVersion: String
+  kind: String
+  metadata: mutationInput_createEnvironments_metadata_Input
+  spec: mutationInput_createEnvironments_spec_Input
+}
+
+input mutationInput_createEnvironments_metadata_Input {
+  creationTimestamp: Void
+  name: String
+  namespace: String
+}
+
+"Represents empty values"
+scalar Void
+
+input mutationInput_createEnvironments_spec_Input {
+  builder: mutationInput_createEnvironments_spec_builder_Input
+  imagepullsecret: String
+  keeparchive: Boolean
+  poolsize: Int
+  resources: mutationInput_createEnvironments_spec_builder_container_resources_Input
+  runtime: mutationInput_createEnvironments_spec_runtime_Input
+  version: Int
+}
+
+input mutationInput_createEnvironments_spec_builder_Input {
+  command: String
+  container: mutationInput_createEnvironments_spec_builder_container_Input
+  image: String
+}
+
+input mutationInput_createEnvironments_spec_builder_container_Input {
+  name: String
+  resources: mutationInput_createEnvironments_spec_builder_container_resources_Input
+}
+
+scalar mutationInput_createEnvironments_spec_builder_container_resources_Input
+
+input mutationInput_createEnvironments_spec_runtime_Input {
+  container: mutationInput_createEnvironments_spec_builder_container_Input
+  image: String
+}
