@@ -2,11 +2,11 @@ import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
 import { Tree, readProjectConfiguration } from '@nrwl/devkit';
 
 import generator from './generator';
-import { NxFissionGeneratorSchema } from './schema';
+import { EnvironmentGeneratorSchema } from './schema';
 
-describe('nx-fission generator', () => {
+describe('environment generator', () => {
   let appTree: Tree;
-  const options: NxFissionGeneratorSchema = { name: 'test' };
+  const options: EnvironmentGeneratorSchema = { name: 'test' };
 
   beforeEach(() => {
     appTree = createTreeWithEmptyWorkspace();
@@ -16,5 +16,5 @@ describe('nx-fission generator', () => {
     await generator(appTree, options);
     const config = readProjectConfiguration(appTree, 'test');
     expect(config).toBeDefined();
-  });
+  })
 });
