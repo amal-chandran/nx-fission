@@ -3,5 +3,11 @@
   "version": "0.0.1",
   "main": "src/index.js",
   "generators": "./generators.json",
-  "executors": "./executors.json"
+  "executors": "./executors.json",
+  "scripts": {
+    "graphql-mesh": "mesh --dir ./src/mesh",
+    "mesh-start": "yarn graphql-mesh start",
+    "mesh-dev": "yarn graphql-mesh dev",
+    "mesh-build": "yarn graphql-mesh build"
+  }
 }
