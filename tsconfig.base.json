@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@nx-fission/nx-fission": ["packages/nx-fission/src/index.ts"]
-    }
+    },
+    "esModuleInterop": true
   },
   "exclude": ["node_modules", "tmp"]
 }
