@@ -1,0 +1,28 @@
+apiVersion: fission.io/v1
+kind: Function
+metadata:
+  creationTimestamp: null
+  name: $name
+  namespace: $fnNamespace
+spec:
+  invokeStrategy:
+    executionStrategy:
+      executorType: $executortype
+      maxScale: $maxscale
+      minScale: $minscale
+      specializationTimeout: 120
+      targetCPUPercent: 0
+    strategyType: execution
+  concurrency: $concurrency
+  environment:
+    name: $environment
+    namespace: $envNamespace
+  functionTimeout: $function-timeout
+  idletimeout: $idletimeout
+  package:
+    functionName: $handler
+    packageref:
+      name: $packageName
+      namespace: $packageNamespace
+  requestsPerPod: $requestsperpod
+  resources: {}

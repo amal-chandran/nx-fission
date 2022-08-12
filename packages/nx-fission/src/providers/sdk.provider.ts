@@ -13,6 +13,8 @@ export const createEnvironment = async (sdk: MeshSDK, fissionSpec: any) => {
   } catch (error) {
     if (get(error, 'message').includes('already exists')) {
       console.log(`Environment ${get(fissionSpec, 'name')} already exists`);
+    } else {
+      console.log('error', error);
     }
   }
 };
@@ -30,7 +32,26 @@ export const createFunction = async (sdk: MeshSDK, fissionSpec: any) => {
   } catch (error) {
     if (get(error, 'message').includes('already exists')) {
       console.log(`Function ${get(fissionSpec, 'name')} already exists`);
+    } else {
+      console.log('error', error);
     }
-    console.log('error', error);
+  }
+};
+
+export const createHTTPTrigger = async (sdk: MeshSDK, fissionSpec: any) => {
+  const envInput = createSpecByType(fissionSpec, 'http-trigger');
+
+  console.log(`Creating http trigger ${get(fissionSpec, 'name')}`);
+
+  try {
+    const functionResponse = await sdk.createHttp({ object: envInput });
+    // console.log('functions', functionResponse);
+    console.log(`Created new ${get(fissionSpec, 'name')} http trigger`);
+  } catch (error) {
+    if (get(error, 'message').includes('already exists')) {
+      console.log(`HTTP Trigger ${get(fissionSpec, 'name')} already exists`);
+    } else {
+      console.log('error', error);
+    }
   }
 };

@@ -1,7 +1,7 @@
 // @ts-nocheck
 export default {
   "name": "FissionCustomMap",
-  "baseUrl": "http://localhost:8001/api/v1/namespaces/fission/services/controller:80/proxy/",
+  "baseUrl": "http://localhost:8685/api/v1/namespaces/fission/services/controller:80/proxy/",
   "operations": [
     {
       "type": "Mutation",

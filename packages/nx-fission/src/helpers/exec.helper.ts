@@ -1,5 +1,6 @@
-import { spawn } from "child_process";
-import shell from "shelljs";
+import { spawn } from 'child_process';
+import shell from 'shelljs';
+import treeKill from 'tree-kill';
 
 export class CommandException extends Error {
   commandSTDException: string;
@@ -29,24 +30,22 @@ export const execCmd = (
   return commandOut;
 };
 export const execCmdDetached = (commandString: string) => {
-  const spaceSplitCommand = commandString.split(" ");
+  const spaceSplitCommand = commandString.split(' ');
   const command = spaceSplitCommand.shift() as string;
 
-  const childProcess = spawn(command, spaceSplitCommand, {
-    detached: true,
+  const childProcess = spawn(command, spaceSplitCommand);
+
+  childProcess.stdout.on('data', (chunk) => {
+    console.log('' + chunk);
   });
 
-  childProcess.stdout.on("data", (chunk) => {
-    console.log("" + chunk);
-  });
-
-  childProcess.stderr.on("data", (chunk) => {
-    console.log("" + chunk);
+  childProcess.stderr.on('data', (chunk) => {
+    console.log('' + chunk);
   });
 
   const kill = () => {
     if (childProcess.pid) {
-      process.kill(-childProcess.pid);
+      treeKill(childProcess.pid);
     }
   };
 

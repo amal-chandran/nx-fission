@@ -6,13 +6,17 @@ import yaml from 'js-yaml';
 import { get, has, isArray } from 'lodash';
 import path from 'path';
 import { zipFolderContents } from '../../helpers/archive.helper';
-import { functionTransform } from '../../helpers/data-transform';
-import { execCmd } from '../../helpers/exec.helper';
+import {
+  functionTransform,
+  httpTriggerTransform,
+} from '../../helpers/data-transform';
+import { execCmd, execCmdDetached } from '../../helpers/exec.helper';
 import { transformSDK } from '../../helpers/sdk.helper';
 import { getMeshSDK } from '../../mesh/.mesh';
 import {
   createEnvironment,
   createFunction,
+  createHTTPTrigger,
 } from '../../providers/sdk.provider';
 
 export default async function (
@@ -28,7 +32,8 @@ export default async function (
   }
   // console.log(context);
 
-  // const proxyChildProcess = execCmdDetached('kubectl -n fission proxy');
+  const proxyChildProcess = execCmdDetached('kubectl -n fission proxy -p 8685');
+
   const sdk = transformSDK(getMeshSDK());
 
   const applicationName = context.projectName;
@@ -36,8 +41,6 @@ export default async function (
   const distPath = path.join(context.root, 'dist');
   const distProjectPath = path.join(distPath, 'apps', applicationName);
   const zipPath = path.join(distPath, `${applicationName}.zip`);
-
-  console.log('distProjectPath', distProjectPath);
 
   await zipFolderContents(distProjectPath, zipPath);
 
@@ -68,10 +71,6 @@ export default async function (
       defaultConfig
     );
 
-    // console.log(functionConfig);
-
-    // continue;
-    // console.log('functionConfig', functionConfig);
     const currentFunctionName = get(functionConfig, 'name');
     const currentEnvironmentName = get(functionConfig, 'environment');
 
@@ -88,17 +87,36 @@ export default async function (
       // Nothing to handle
     }
 
-    console.log('environmentName', currentEnvironmentName);
-
     execCmd(
       `fission package create --src ${zipPath}  --env ${currentEnvironmentName} --name ${currentFunctionName}`
     );
-    // console.log('functionConfig', functionConfig);
 
     await createFunction(sdk, functionConfig);
+
+    const functionEvents = get(functionConfig, 'event');
+
+    for (const functionEvent of functionEvents) {
+      if (has(functionEvent, 'http')) {
+        const triggerData = get(functionEvent, 'http');
+
+        const httpTriggerConfig = await httpTriggerTransform(
+          functionConfig,
+          triggerData
+        );
+
+        try {
+          await sdk.deleteHttp({ httpTrigger: get(httpTriggerConfig, 'name') });
+        } catch (error) {
+          //
+        }
+
+        await createHTTPTrigger(sdk, httpTriggerConfig);
+      }
+    }
   }
-  // console.log('functions', functions);
-  // proxyChildProcess.kill();
+
+  proxyChildProcess.kill();
+
   return {
     success: true,
   };

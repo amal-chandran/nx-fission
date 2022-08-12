@@ -1,0 +1,8 @@
+mutation createHttp($object: V1HTTPTriggerInput!) {
+  createHttps(v1HTTPTriggerInput: $object) {
+    name
+  }
+}
+mutation deleteHttp($httpTrigger: String!) {
+  deleteHttp(httpTrigger: $httpTrigger)
+}

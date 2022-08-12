@@ -24,3 +24,12 @@ export const functionTransform = async (
 
   return extendedConfig;
 };
+
+export const httpTriggerTransform = async (
+  handlerData: any,
+  httpTrigger: any
+) => {
+  httpTrigger['functionName'] = get(handlerData, 'name');
+
+  return defaultsDeep(httpTrigger, handlerData);
+};
