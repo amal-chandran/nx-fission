@@ -19,16 +19,15 @@ export type Scalars = {
   /** The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. */
   Int: number;
   Float: number;
+  JSON: any;
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: Date | string;
   /** Represents empty values */
   Void: void;
   mutationInput_createEnvironments_spec_builder_container_resources_Input: any;
-  JSON: any;
 };
 
 export type Query = {
-  dummy?: Maybe<Scalars['String']>;
   /**
    * Get archive
    *
@@ -131,6 +130,7 @@ export type Query = {
    * Equivalent to GET /v2/watches
    */
   getWatches?: Maybe<Array<Maybe<V1KubernetesWatchTrigger>>>;
+  dummy?: Maybe<Scalars['String']>;
 };
 
 
@@ -223,12 +223,6 @@ export type QuerygetWatchesArgs = {
 
 export type Mutation = {
   /**
-   * Create environment
-   *
-   * Equivalent to POST /v2/environments
-   */
-  createEnvironments?: Maybe<V1ObjectMeta>;
-  /**
    * Create archive
    *
    * Equivalent to POST /proxy/storage/v1/archive
@@ -240,6 +234,7 @@ export type Mutation = {
    * Equivalent to POST /v2/canaryconfigs
    */
   createCanaryConfigs?: Maybe<V1ObjectMeta>;
+  createEnvironments?: Maybe<environment_Output>;
   /**
    * Create function
    *
@@ -381,13 +376,13 @@ export type Mutation = {
 };
 
 
-export type MutationcreateEnvironmentsArgs = {
-  v1EnvironmentInput: V1EnvironmentInput;
+export type MutationcreateCanaryConfigsArgs = {
+  v1CanaryConfigInput: V1CanaryConfigInput;
 };
 
 
-export type MutationcreateCanaryConfigsArgs = {
-  v1CanaryConfigInput: V1CanaryConfigInput;
+export type MutationcreateEnvironmentsArgs = {
+  input?: InputMaybe<environment_Input>;
 };
 
 
@@ -514,54 +509,6 @@ export type MutationupdateTimeArgs = {
 export type MutationupdateWatchArgs = {
   v1KubernetesWatchTriggerInput: V1KubernetesWatchTriggerInput;
   watch: Scalars['String'];
-};
-
-export type environment_Output = {
-  name?: Maybe<Scalars['String']>;
-  namespace?: Maybe<Scalars['String']>;
-  uid?: Maybe<Scalars['String']>;
-  resourceVersion?: Maybe<Scalars['String']>;
-  generation?: Maybe<Scalars['Int']>;
-  creationTimestamp?: Maybe<Scalars['DateTime']>;
-};
-
-export type environment_Input = {
-  apiVersion?: InputMaybe<Scalars['String']>;
-  kind?: InputMaybe<Scalars['String']>;
-  metadata?: InputMaybe<mutationInput_createEnvironments_metadata_Input>;
-  spec?: InputMaybe<mutationInput_createEnvironments_spec_Input>;
-};
-
-export type mutationInput_createEnvironments_metadata_Input = {
-  creationTimestamp?: InputMaybe<Scalars['Void']>;
-  name?: InputMaybe<Scalars['String']>;
-  namespace?: InputMaybe<Scalars['String']>;
-};
-
-export type mutationInput_createEnvironments_spec_Input = {
-  builder?: InputMaybe<mutationInput_createEnvironments_spec_builder_Input>;
-  imagepullsecret?: InputMaybe<Scalars['String']>;
-  keeparchive?: InputMaybe<Scalars['Boolean']>;
-  poolsize?: InputMaybe<Scalars['Int']>;
-  resources?: InputMaybe<Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input']>;
-  runtime?: InputMaybe<mutationInput_createEnvironments_spec_runtime_Input>;
-  version?: InputMaybe<Scalars['Int']>;
-};
-
-export type mutationInput_createEnvironments_spec_builder_Input = {
-  command?: InputMaybe<Scalars['String']>;
-  container?: InputMaybe<mutationInput_createEnvironments_spec_builder_container_Input>;
-  image?: InputMaybe<Scalars['String']>;
-};
-
-export type mutationInput_createEnvironments_spec_builder_container_Input = {
-  name?: InputMaybe<Scalars['String']>;
-  resources?: InputMaybe<Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input']>;
-};
-
-export type mutationInput_createEnvironments_spec_runtime_Input = {
-  container?: InputMaybe<mutationInput_createEnvironments_spec_builder_container_Input>;
-  image?: InputMaybe<Scalars['String']>;
 };
 
 /** CanaryConfig is for canary deployment of two functions. */
@@ -4468,6 +4415,54 @@ export type V1KubernetesWatchTriggerSpecInput = {
   type: Scalars['String'];
 };
 
+export type environment_Output = {
+  name?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
+  uid?: Maybe<Scalars['String']>;
+  resourceVersion?: Maybe<Scalars['String']>;
+  generation?: Maybe<Scalars['Int']>;
+  creationTimestamp?: Maybe<Scalars['DateTime']>;
+};
+
+export type environment_Input = {
+  apiVersion?: InputMaybe<Scalars['String']>;
+  kind?: InputMaybe<Scalars['String']>;
+  metadata?: InputMaybe<mutationInput_createEnvironments_metadata_Input>;
+  spec?: InputMaybe<mutationInput_createEnvironments_spec_Input>;
+};
+
+export type mutationInput_createEnvironments_metadata_Input = {
+  creationTimestamp?: InputMaybe<Scalars['Void']>;
+  name?: InputMaybe<Scalars['String']>;
+  namespace?: InputMaybe<Scalars['String']>;
+};
+
+export type mutationInput_createEnvironments_spec_Input = {
+  builder?: InputMaybe<mutationInput_createEnvironments_spec_builder_Input>;
+  imagepullsecret?: InputMaybe<Scalars['String']>;
+  keeparchive?: InputMaybe<Scalars['Boolean']>;
+  poolsize?: InputMaybe<Scalars['Int']>;
+  resources?: InputMaybe<Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input']>;
+  runtime?: InputMaybe<mutationInput_createEnvironments_spec_runtime_Input>;
+  version?: InputMaybe<Scalars['Int']>;
+};
+
+export type mutationInput_createEnvironments_spec_builder_Input = {
+  command?: InputMaybe<Scalars['String']>;
+  container?: InputMaybe<mutationInput_createEnvironments_spec_builder_container_Input>;
+  image?: InputMaybe<Scalars['String']>;
+};
+
+export type mutationInput_createEnvironments_spec_builder_container_Input = {
+  name?: InputMaybe<Scalars['String']>;
+  resources?: InputMaybe<Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input']>;
+};
+
+export type mutationInput_createEnvironments_spec_runtime_Input = {
+  container?: InputMaybe<mutationInput_createEnvironments_spec_builder_container_Input>;
+  image?: InputMaybe<Scalars['String']>;
+};
+
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
@@ -4554,26 +4549,16 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
-  String: ResolverTypeWrapper<Scalars['String']>;
-  environment_Output: ResolverTypeWrapper<environment_Output>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
-  environment_Input: environment_Input;
-  mutationInput_createEnvironments_metadata_Input: mutationInput_createEnvironments_metadata_Input;
-  Void: ResolverTypeWrapper<Scalars['Void']>;
-  mutationInput_createEnvironments_spec_Input: mutationInput_createEnvironments_spec_Input;
-  mutationInput_createEnvironments_spec_builder_Input: mutationInput_createEnvironments_spec_builder_Input;
-  mutationInput_createEnvironments_spec_builder_container_Input: mutationInput_createEnvironments_spec_builder_container_Input;
-  mutationInput_createEnvironments_spec_builder_container_resources_Input: ResolverTypeWrapper<Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input']>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  mutationInput_createEnvironments_spec_runtime_Input: mutationInput_createEnvironments_spec_runtime_Input;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   V1CanaryConfig: ResolverTypeWrapper<V1CanaryConfig>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   V1ObjectMeta: ResolverTypeWrapper<V1ObjectMeta>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   V1ManagedFieldsEntry: ResolverTypeWrapper<V1ManagedFieldsEntry>;
   V1OwnerReference: ResolverTypeWrapper<V1OwnerReference>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   V1CanaryConfigSpec: ResolverTypeWrapper<V1CanaryConfigSpec>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   V1CanaryConfigStatus: ResolverTypeWrapper<V1CanaryConfigStatus>;
   V1Environment: ResolverTypeWrapper<V1Environment>;
   V1EnvironmentSpec: ResolverTypeWrapper<V1EnvironmentSpec>;
@@ -4843,32 +4828,32 @@ export type ResolversTypes = ResolversObject<{
   V1TimeTriggerSpecInput: V1TimeTriggerSpecInput;
   V1KubernetesWatchTriggerInput: V1KubernetesWatchTriggerInput;
   V1KubernetesWatchTriggerSpecInput: V1KubernetesWatchTriggerSpecInput;
+  environment_Output: ResolverTypeWrapper<environment_Output>;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  environment_Input: environment_Input;
+  mutationInput_createEnvironments_metadata_Input: mutationInput_createEnvironments_metadata_Input;
+  Void: ResolverTypeWrapper<Scalars['Void']>;
+  mutationInput_createEnvironments_spec_Input: mutationInput_createEnvironments_spec_Input;
+  mutationInput_createEnvironments_spec_builder_Input: mutationInput_createEnvironments_spec_builder_Input;
+  mutationInput_createEnvironments_spec_builder_container_Input: mutationInput_createEnvironments_spec_builder_container_Input;
+  mutationInput_createEnvironments_spec_builder_container_resources_Input: ResolverTypeWrapper<Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input']>;
+  mutationInput_createEnvironments_spec_runtime_Input: mutationInput_createEnvironments_spec_runtime_Input;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Query: {};
   Mutation: {};
-  String: Scalars['String'];
-  environment_Output: environment_Output;
-  Int: Scalars['Int'];
-  DateTime: Scalars['DateTime'];
-  environment_Input: environment_Input;
-  mutationInput_createEnvironments_metadata_Input: mutationInput_createEnvironments_metadata_Input;
-  Void: Scalars['Void'];
-  mutationInput_createEnvironments_spec_Input: mutationInput_createEnvironments_spec_Input;
-  mutationInput_createEnvironments_spec_builder_Input: mutationInput_createEnvironments_spec_builder_Input;
-  mutationInput_createEnvironments_spec_builder_container_Input: mutationInput_createEnvironments_spec_builder_container_Input;
-  mutationInput_createEnvironments_spec_builder_container_resources_Input: Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input'];
-  Boolean: Scalars['Boolean'];
-  mutationInput_createEnvironments_spec_runtime_Input: mutationInput_createEnvironments_spec_runtime_Input;
   JSON: Scalars['JSON'];
   V1CanaryConfig: V1CanaryConfig;
+  String: Scalars['String'];
   V1ObjectMeta: V1ObjectMeta;
   Float: Scalars['Float'];
   V1ManagedFieldsEntry: V1ManagedFieldsEntry;
   V1OwnerReference: V1OwnerReference;
+  Boolean: Scalars['Boolean'];
   V1CanaryConfigSpec: V1CanaryConfigSpec;
+  Int: Scalars['Int'];
   V1CanaryConfigStatus: V1CanaryConfigStatus;
   V1Environment: V1Environment;
   V1EnvironmentSpec: V1EnvironmentSpec;
@@ -5138,10 +5123,19 @@ export type ResolversParentTypes = ResolversObject<{
   V1TimeTriggerSpecInput: V1TimeTriggerSpecInput;
   V1KubernetesWatchTriggerInput: V1KubernetesWatchTriggerInput;
   V1KubernetesWatchTriggerSpecInput: V1KubernetesWatchTriggerSpecInput;
+  environment_Output: environment_Output;
+  DateTime: Scalars['DateTime'];
+  environment_Input: environment_Input;
+  mutationInput_createEnvironments_metadata_Input: mutationInput_createEnvironments_metadata_Input;
+  Void: Scalars['Void'];
+  mutationInput_createEnvironments_spec_Input: mutationInput_createEnvironments_spec_Input;
+  mutationInput_createEnvironments_spec_builder_Input: mutationInput_createEnvironments_spec_builder_Input;
+  mutationInput_createEnvironments_spec_builder_container_Input: mutationInput_createEnvironments_spec_builder_container_Input;
+  mutationInput_createEnvironments_spec_builder_container_resources_Input: Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input'];
+  mutationInput_createEnvironments_spec_runtime_Input: mutationInput_createEnvironments_spec_runtime_Input;
 }>;
 
 export type QueryResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  dummy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   getArchives?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   getCanaryConfig?: Resolver<Maybe<ResolversTypes['V1CanaryConfig']>, ParentType, ContextType, RequireFields<QuerygetCanaryConfigArgs, 'canaryConfig'>>;
   getCanaryConfigs?: Resolver<Maybe<Array<Maybe<ResolversTypes['V1CanaryConfig']>>>, ParentType, ContextType, Partial<QuerygetCanaryConfigsArgs>>;
@@ -5159,12 +5153,13 @@ export type QueryResolvers<ContextType = MeshContext, ParentType extends Resolve
   getTimes?: Resolver<Maybe<Array<Maybe<ResolversTypes['V1TimeTrigger']>>>, ParentType, ContextType, Partial<QuerygetTimesArgs>>;
   getWatch?: Resolver<Maybe<ResolversTypes['V1KubernetesWatchTrigger']>, ParentType, ContextType, RequireFields<QuerygetWatchArgs, 'watch'>>;
   getWatches?: Resolver<Maybe<Array<Maybe<ResolversTypes['V1KubernetesWatchTrigger']>>>, ParentType, ContextType, Partial<QuerygetWatchesArgs>>;
+  dummy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 }>;
 
 export type MutationResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  createEnvironments?: Resolver<Maybe<ResolversTypes['V1ObjectMeta']>, ParentType, ContextType, RequireFields<MutationcreateEnvironmentsArgs, 'v1EnvironmentInput'>>;
   createArchives?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   createCanaryConfigs?: Resolver<Maybe<ResolversTypes['V1ObjectMeta']>, ParentType, ContextType, RequireFields<MutationcreateCanaryConfigsArgs, 'v1CanaryConfigInput'>>;
+  createEnvironments?: Resolver<Maybe<ResolversTypes['environment_Output']>, ParentType, ContextType, Partial<MutationcreateEnvironmentsArgs>>;
   createFunctions?: Resolver<Maybe<ResolversTypes['V1ObjectMeta']>, ParentType, ContextType, RequireFields<MutationcreateFunctionsArgs, 'v1FunctionInput'>>;
   createHttps?: Resolver<Maybe<ResolversTypes['V1ObjectMeta']>, ParentType, ContextType, RequireFields<MutationcreateHttpsArgs, 'v1HTTPTriggerInput'>>;
   createMessagequeues?: Resolver<Maybe<ResolversTypes['V1ObjectMeta']>, ParentType, ContextType, RequireFields<MutationcreateMessagequeuesArgs, 'v1MessageQueueTriggerInput'>>;
@@ -5189,28 +5184,6 @@ export type MutationResolvers<ContextType = MeshContext, ParentType extends Reso
   updateTime?: Resolver<Maybe<ResolversTypes['V1ObjectMeta']>, ParentType, ContextType, RequireFields<MutationupdateTimeArgs, 'timeTrigger' | 'v1TimeTriggerInput'>>;
   updateWatch?: Resolver<Maybe<ResolversTypes['V1ObjectMeta']>, ParentType, ContextType, RequireFields<MutationupdateWatchArgs, 'v1KubernetesWatchTriggerInput' | 'watch'>>;
 }>;
-
-export type environment_OutputResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['environment_Output'] = ResolversParentTypes['environment_Output']> = ResolversObject<{
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  namespace?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  uid?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  resourceVersion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  generation?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  creationTimestamp?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
-  name: 'DateTime';
-}
-
-export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Void'], any> {
-  name: 'Void';
-}
-
-export interface mutationInput_createEnvironments_spec_builder_container_resources_InputScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['mutationInput_createEnvironments_spec_builder_container_resources_Input'], any> {
-  name: 'mutationInput_createEnvironments_spec_builder_container_resources_Input';
-}
 
 export interface JSONScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
@@ -6384,13 +6357,31 @@ export type V1KubernetesWatchTriggerSpecResolvers<ContextType = MeshContext, Par
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type environment_OutputResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['environment_Output'] = ResolversParentTypes['environment_Output']> = ResolversObject<{
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  namespace?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  uid?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  resourceVersion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  generation?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  creationTimestamp?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
+
+export interface VoidScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Void'], any> {
+  name: 'Void';
+}
+
+export interface mutationInput_createEnvironments_spec_builder_container_resources_InputScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['mutationInput_createEnvironments_spec_builder_container_resources_Input'], any> {
+  name: 'mutationInput_createEnvironments_spec_builder_container_resources_Input';
+}
+
 export type Resolvers<ContextType = MeshContext> = ResolversObject<{
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  environment_Output?: environment_OutputResolvers<ContextType>;
-  DateTime?: GraphQLScalarType;
-  Void?: GraphQLScalarType;
-  mutationInput_createEnvironments_spec_builder_container_resources_Input?: GraphQLScalarType;
   JSON?: GraphQLScalarType;
   V1CanaryConfig?: V1CanaryConfigResolvers<ContextType>;
   V1ObjectMeta?: V1ObjectMetaResolvers<ContextType>;
@@ -6529,112 +6520,16 @@ export type Resolvers<ContextType = MeshContext> = ResolversObject<{
   V1TimeTriggerSpec?: V1TimeTriggerSpecResolvers<ContextType>;
   V1KubernetesWatchTrigger?: V1KubernetesWatchTriggerResolvers<ContextType>;
   V1KubernetesWatchTriggerSpec?: V1KubernetesWatchTriggerSpecResolvers<ContextType>;
+  environment_Output?: environment_OutputResolvers<ContextType>;
+  DateTime?: GraphQLScalarType;
+  Void?: GraphQLScalarType;
+  mutationInput_createEnvironments_spec_builder_container_resources_Input?: GraphQLScalarType;
 }>;
 
 
 import { MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';
 
 import { InContextSdkMethod } from '@graphql-mesh/types';
-
-
-    export namespace FissionCustomMapTypes {
-      export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-/** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
-  ID: string;
-  /** The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text. */
-  String: string;
-  /** The `Boolean` scalar type represents `true` or `false`. */
-  Boolean: boolean;
-  /** The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. */
-  Int: number;
-  Float: number;
-  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
-  DateTime: Date | string;
-  /** Represents empty values */
-  Void: void;
-  mutationInput_createEnvironments_spec_builder_container_resources_Input: any;
-};
-
-export type Query = {
-  dummy?: Maybe<Scalars['String']>;
-};
-
-export type Mutation = {
-  createEnvironments?: Maybe<environment_Output>;
-};
-
-
-export type MutationcreateEnvironmentsArgs = {
-  input?: InputMaybe<environment_Input>;
-};
-
-export type environment_Output = {
-  name?: Maybe<Scalars['String']>;
-  namespace?: Maybe<Scalars['String']>;
-  uid?: Maybe<Scalars['String']>;
-  resourceVersion?: Maybe<Scalars['String']>;
-  generation?: Maybe<Scalars['Int']>;
-  creationTimestamp?: Maybe<Scalars['DateTime']>;
-};
-
-export type environment_Input = {
-  apiVersion?: InputMaybe<Scalars['String']>;
-  kind?: InputMaybe<Scalars['String']>;
-  metadata?: InputMaybe<mutationInput_createEnvironments_metadata_Input>;
-  spec?: InputMaybe<mutationInput_createEnvironments_spec_Input>;
-};
-
-export type mutationInput_createEnvironments_metadata_Input = {
-  creationTimestamp?: InputMaybe<Scalars['Void']>;
-  name?: InputMaybe<Scalars['String']>;
-  namespace?: InputMaybe<Scalars['String']>;
-};
-
-export type mutationInput_createEnvironments_spec_Input = {
-  builder?: InputMaybe<mutationInput_createEnvironments_spec_builder_Input>;
-  imagepullsecret?: InputMaybe<Scalars['String']>;
-  keeparchive?: InputMaybe<Scalars['Boolean']>;
-  poolsize?: InputMaybe<Scalars['Int']>;
-  resources?: InputMaybe<Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input']>;
-  runtime?: InputMaybe<mutationInput_createEnvironments_spec_runtime_Input>;
-  version?: InputMaybe<Scalars['Int']>;
-};
-
-export type mutationInput_createEnvironments_spec_builder_Input = {
-  command?: InputMaybe<Scalars['String']>;
-  container?: InputMaybe<mutationInput_createEnvironments_spec_builder_container_Input>;
-  image?: InputMaybe<Scalars['String']>;
-};
-
-export type mutationInput_createEnvironments_spec_builder_container_Input = {
-  name?: InputMaybe<Scalars['String']>;
-  resources?: InputMaybe<Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input']>;
-};
-
-export type mutationInput_createEnvironments_spec_runtime_Input = {
-  container?: InputMaybe<mutationInput_createEnvironments_spec_builder_container_Input>;
-  image?: InputMaybe<Scalars['String']>;
-};
-
-    }
-    export type QueryFissionCustomMapSdk = {
-  /** undefined **/
-  dummy: InContextSdkMethod<FissionCustomMapTypes.Query['dummy'], {}, MeshContext>
-};
-
-export type MutationFissionCustomMapSdk = {
-  /** undefined **/
-  createEnvironments: InContextSdkMethod<FissionCustomMapTypes.Mutation['createEnvironments'], FissionCustomMapTypes.MutationcreateEnvironmentsArgs, MeshContext>
-};
-
-export type SubscriptionFissionCustomMapSdk = {
-
-};
 
 
     export namespace FissionTypes {
@@ -11231,17 +11126,117 @@ export type SubscriptionFissionSdk = {
 
 };
 
-export type FissionCustomMapContext = {
-      ["FissionCustomMap"]: { Query: QueryFissionCustomMapSdk, Mutation: MutationFissionCustomMapSdk, Subscription: SubscriptionFissionCustomMapSdk },
-      
-    };
+
+    export namespace FissionCustomMapTypes {
+      export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+/** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+  ID: string;
+  /** The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text. */
+  String: string;
+  /** The `Boolean` scalar type represents `true` or `false`. */
+  Boolean: boolean;
+  /** The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. */
+  Int: number;
+  Float: number;
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  DateTime: Date | string;
+  /** Represents empty values */
+  Void: void;
+  mutationInput_createEnvironments_spec_builder_container_resources_Input: any;
+};
+
+export type Query = {
+  dummy?: Maybe<Scalars['String']>;
+};
+
+export type Mutation = {
+  createEnvironments?: Maybe<environment_Output>;
+};
+
+
+export type MutationcreateEnvironmentsArgs = {
+  input?: InputMaybe<environment_Input>;
+};
+
+export type environment_Output = {
+  name?: Maybe<Scalars['String']>;
+  namespace?: Maybe<Scalars['String']>;
+  uid?: Maybe<Scalars['String']>;
+  resourceVersion?: Maybe<Scalars['String']>;
+  generation?: Maybe<Scalars['Int']>;
+  creationTimestamp?: Maybe<Scalars['DateTime']>;
+};
+
+export type environment_Input = {
+  apiVersion?: InputMaybe<Scalars['String']>;
+  kind?: InputMaybe<Scalars['String']>;
+  metadata?: InputMaybe<mutationInput_createEnvironments_metadata_Input>;
+  spec?: InputMaybe<mutationInput_createEnvironments_spec_Input>;
+};
+
+export type mutationInput_createEnvironments_metadata_Input = {
+  creationTimestamp?: InputMaybe<Scalars['Void']>;
+  name?: InputMaybe<Scalars['String']>;
+  namespace?: InputMaybe<Scalars['String']>;
+};
+
+export type mutationInput_createEnvironments_spec_Input = {
+  builder?: InputMaybe<mutationInput_createEnvironments_spec_builder_Input>;
+  imagepullsecret?: InputMaybe<Scalars['String']>;
+  keeparchive?: InputMaybe<Scalars['Boolean']>;
+  poolsize?: InputMaybe<Scalars['Int']>;
+  resources?: InputMaybe<Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input']>;
+  runtime?: InputMaybe<mutationInput_createEnvironments_spec_runtime_Input>;
+  version?: InputMaybe<Scalars['Int']>;
+};
+
+export type mutationInput_createEnvironments_spec_builder_Input = {
+  command?: InputMaybe<Scalars['String']>;
+  container?: InputMaybe<mutationInput_createEnvironments_spec_builder_container_Input>;
+  image?: InputMaybe<Scalars['String']>;
+};
+
+export type mutationInput_createEnvironments_spec_builder_container_Input = {
+  name?: InputMaybe<Scalars['String']>;
+  resources?: InputMaybe<Scalars['mutationInput_createEnvironments_spec_builder_container_resources_Input']>;
+};
+
+export type mutationInput_createEnvironments_spec_runtime_Input = {
+  container?: InputMaybe<mutationInput_createEnvironments_spec_builder_container_Input>;
+  image?: InputMaybe<Scalars['String']>;
+};
+
+    }
+    export type QueryFissionCustomMapSdk = {
+  /** undefined **/
+  dummy: InContextSdkMethod<FissionCustomMapTypes.Query['dummy'], {}, MeshContext>
+};
+
+export type MutationFissionCustomMapSdk = {
+  /** undefined **/
+  createEnvironments: InContextSdkMethod<FissionCustomMapTypes.Mutation['createEnvironments'], FissionCustomMapTypes.MutationcreateEnvironmentsArgs, MeshContext>
+};
+
+export type SubscriptionFissionCustomMapSdk = {
+
+};
 
 export type FissionContext = {
       ["Fission"]: { Query: QueryFissionSdk, Mutation: MutationFissionSdk, Subscription: SubscriptionFissionSdk },
       ["fetch"]: typeof fetch
     };
 
-export type MeshContext = FissionCustomMapContext & FissionContext & BaseMeshContext;
+export type FissionCustomMapContext = {
+      ["FissionCustomMap"]: { Query: QueryFissionCustomMapSdk, Mutation: MutationFissionCustomMapSdk, Subscription: SubscriptionFissionCustomMapSdk },
+      
+    };
+
+export type MeshContext = FissionContext & FissionCustomMapContext & BaseMeshContext;
 
 
 import { getMesh, ExecuteMeshFn, SubscribeMeshFn } from '@graphql-mesh/runtime';
@@ -11253,12 +11248,6 @@ const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/',
 const importFn = (moduleId: string) => {
   const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\').join('/').replace(baseDir + '/', '');
   switch(relativeModuleId) {
-    case ".mesh/sources/FissionCustomMap/jsonSchemaBundle":
-      return import("./sources/FissionCustomMap/jsonSchemaBundle");
-    
-    case ".mesh/sources/Fission/oas-schema":
-      return import("./sources/Fission/oas-schema");
-    
     default:
       return Promise.reject(new Error(`Cannot find module '${relativeModuleId}'.`));
   }
@@ -11273,172 +11262,19 @@ const rootStore = new MeshStore('.mesh', new FsStoreStorageAdapter({
   validate: false
 });
 
-import type { GetMeshOptions } from '@graphql-mesh/runtime';
-import type { YamlConfig } from '@graphql-mesh/types';
-import { PubSub } from '@graphql-mesh/utils';
-import { DefaultLogger } from '@graphql-mesh/utils';
-import MeshCache from "@graphql-mesh/cache-localforage";
-import { fetchFactory } from 'fetchache';
-import { fetch, Request, Response } from 'cross-undici-fetch';
 
-import OpenapiHandler from "@graphql-mesh/openapi"
-import JsonSchemaHandler from "@graphql-mesh/json-schema"
-import StitchingMerger from "@graphql-mesh/merger-stitching";
-import { printWithCache } from '@graphql-mesh/utils';
-export const rawServeConfig: YamlConfig.Config['serve'] = undefined as any
-export async function getMeshOptions(): Promise<GetMeshOptions> {
-const pubsub = new PubSub();
-const sourcesStore = rootStore.child('sources');
-const logger = new DefaultLogger("🕸️  Mesh");
-const cache = new (MeshCache as any)({
-      ...({} as any),
-      importFn,
-      store: rootStore.child('cache'),
-      pubsub,
-      logger,
-    } as any)
-const fetchFn = fetchFactory({ cache, fetch, Request, Response });
-const sources = [];
-const transforms = [];
-const additionalEnvelopPlugins = [];
-const fissionTransforms = [];
-const fissionCustomMapTransforms = [];
-const additionalTypeDefs = [] as any[];
-const fissionHandler = new OpenapiHandler({
-              name: "Fission",
-              config: {"baseUrl":"http://localhost:8685/api/v1/namespaces/fission/services/controller:80/proxy/","source":"fission-spec.yaml","operationIdFieldNames":true},
-              baseDir,
-              cache,
-              pubsub,
-              store: sourcesStore.child("Fission"),
-              logger: logger.child("Fission"),
-              importFn,
-              fetchFn,
-            });
-const fissionCustomMapHandler = new JsonSchemaHandler({
-              name: "FissionCustomMap",
-              config: {"baseUrl":"http://localhost:8685/api/v1/namespaces/fission/services/controller:80/proxy/","operations":[{"type":"Mutation","field":"createEnvironments","path":"/v2/environments","method":"POST","requestTypeName":"environment","requestSample":"./json-samples/create-environment/create-environment.request.json","responseTypeName":"environment_Output","responseSample":"./json-samples/create-environment/create-environment.response.json"}]},
-              baseDir,
-              cache,
-              pubsub,
-              store: sourcesStore.child("FissionCustomMap"),
-              logger: logger.child("FissionCustomMap"),
-              importFn,
-              fetchFn,
-            });
-sources[0] = {
-          name: 'Fission',
-          handler: fissionHandler,
-          transforms: fissionTransforms
-        }
-sources[1] = {
-          name: 'FissionCustomMap',
-          handler: fissionCustomMapHandler,
-          transforms: fissionCustomMapTransforms
-        }
-const merger = new(StitchingMerger as any)({
-        cache,
-        pubsub,
-        logger: logger.child('stitchingMerger'),
-        store: rootStore.child('stitchingMerger')
-      })
-const additionalResolvers = [] as any[]
-
-  return {
-    sources,
-    transforms,
-    additionalTypeDefs,
-    additionalResolvers,
-    cache,
-    pubsub,
-    merger,
-    logger,
-    additionalEnvelopPlugins,
-    get documents() {
-      return [
-      {
-        document: GetEnvironmentsDocument,
-        get rawSDL() {
-          return printWithCache(GetEnvironmentsDocument);
-        },
-        location: 'GetEnvironmentsDocument.graphql'
-      },{
-        document: GetEnvironmentDocument,
-        get rawSDL() {
-          return printWithCache(GetEnvironmentDocument);
-        },
-        location: 'GetEnvironmentDocument.graphql'
-      },{
-        document: DeleteEnvironmentDocument,
-        get rawSDL() {
-          return printWithCache(DeleteEnvironmentDocument);
-        },
-        location: 'DeleteEnvironmentDocument.graphql'
-      },{
-        document: CreateEnvironmentsDocument,
-        get rawSDL() {
-          return printWithCache(CreateEnvironmentsDocument);
-        },
-        location: 'CreateEnvironmentsDocument.graphql'
-      },{
-        document: GetFunctionsDocument,
-        get rawSDL() {
-          return printWithCache(GetFunctionsDocument);
-        },
-        location: 'GetFunctionsDocument.graphql'
-      },{
-        document: GetFunctionDocument,
-        get rawSDL() {
-          return printWithCache(GetFunctionDocument);
-        },
-        location: 'GetFunctionDocument.graphql'
-      },{
-        document: DeleteFunctionDocument,
-        get rawSDL() {
-          return printWithCache(DeleteFunctionDocument);
-        },
-        location: 'DeleteFunctionDocument.graphql'
-      },{
-        document: CreateFunctionsDocument,
-        get rawSDL() {
-          return printWithCache(CreateFunctionsDocument);
-        },
-        location: 'CreateFunctionsDocument.graphql'
-      },{
-        document: CreateHttpDocument,
-        get rawSDL() {
-          return printWithCache(CreateHttpDocument);
-        },
-        location: 'CreateHttpDocument.graphql'
-      },{
-        document: DeleteHttpDocument,
-        get rawSDL() {
-          return printWithCache(DeleteHttpDocument);
-        },
-        location: 'DeleteHttpDocument.graphql'
-      },{
-        document: GetPackagesDocument,
-        get rawSDL() {
-          return printWithCache(GetPackagesDocument);
-        },
-        location: 'GetPackagesDocument.graphql'
-      },{
-        document: GetPackageDocument,
-        get rawSDL() {
-          return printWithCache(GetPackageDocument);
-        },
-        location: 'GetPackageDocument.graphql'
-      },{
-        document: DeletePackageDocument,
-        get rawSDL() {
-          return printWithCache(DeletePackageDocument);
-        },
-        location: 'DeletePackageDocument.graphql'
-      }
-    ];
-    },
-  };
-}
+                import { findAndParseConfig } from '@graphql-mesh/cli';
+                function getMeshOptions() {
+                  console.warn('WARNING: These artifacts are built for development mode. Please run "mesh build" to build production artifacts');
+                  return findAndParseConfig({
+                    dir: baseDir,
+                    artifactsDir: ".mesh",
+                    configName: "mesh",
+                    additionalPackagePrefixes: [],
+                    initialLoggerPrefix: "🕸️  Mesh",
+                  });
+                }
+              
 
 let meshInstance$: Promise<MeshInstance<MeshContext>>;
 
@@ -11486,7 +11322,7 @@ export type createEnvironmentsMutationVariables = Exact<{
 }>;
 
 
-export type createEnvironmentsMutation = { createEnvironments?: Maybe<Pick<V1ObjectMeta, 'name' | 'namespace' | 'uid' | 'resourceVersion' | 'generation' | 'creationTimestamp'>> };
+export type createEnvironmentsMutation = { createEnvironments?: Maybe<Pick<environment_Output, 'name' | 'namespace' | 'uid' | 'resourceVersion' | 'generation' | 'creationTimestamp'>> };
 
 export type getFunctionsQueryVariables = Exact<{ [key: string]: never; }>;
 

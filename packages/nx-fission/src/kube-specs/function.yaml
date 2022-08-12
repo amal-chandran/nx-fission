@@ -26,3 +26,5 @@ spec:
       namespace: $packageNamespace
   requestsPerPod: $requestsperpod
   resources: {}
+  configmaps: $configmaps
+  secrets: $secrets

@@ -11,8 +11,13 @@ import {
   httpTriggerTransform,
 } from '../../helpers/data-transform';
 import { execCmd, execCmdDetached } from '../../helpers/exec.helper';
+import { createKubeClient } from '../../helpers/k8s.helper';
 import { transformSDK } from '../../helpers/sdk.helper';
 import { getMeshSDK } from '../../mesh/.mesh';
+import {
+  createEnvironmentVariables,
+  deleteEnvironmentVariables,
+} from '../../providers/k8s.provider';
 import {
   createEnvironment,
   createFunction,
@@ -28,13 +33,14 @@ export default async function (
     {},
     context
   )) {
-    // console.log(s);
+    //
   }
-  // console.log(context);
 
   const proxyChildProcess = execCmdDetached('kubectl -n fission proxy -p 8685');
 
   const sdk = transformSDK(getMeshSDK());
+
+  const { k8sApi } = createKubeClient();
 
   const applicationName = context.projectName;
   const appRoot = path.join(context.root, 'apps', applicationName);
@@ -90,6 +96,31 @@ export default async function (
     execCmd(
       `fission package create --src ${zipPath}  --env ${currentEnvironmentName} --name ${currentFunctionName}`
     );
+
+    try {
+      await deleteEnvironmentVariables(k8sApi, functionConfig);
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      const { configMapName, secretMapName } = await createEnvironmentVariables(
+        k8sApi,
+        functionConfig,
+        defaultConfig
+      );
+      const fnNamespace = get(functionConfig, 'fnNamespace');
+
+      functionConfig['configmaps'] = [
+        { name: configMapName, namespace: fnNamespace },
+      ];
+
+      functionConfig['secrets'] = [
+        { name: secretMapName, namespace: fnNamespace },
+      ];
+    } catch (error) {
+      // console.log(error);
+    }
 
     await createFunction(sdk, functionConfig);
 
