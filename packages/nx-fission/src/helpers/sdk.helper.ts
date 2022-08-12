@@ -26,3 +26,6 @@ export const responseSDK = <T>(response: T): T => {
     return response;
   }
 };
+export const quitException=()=>{
+  
+}

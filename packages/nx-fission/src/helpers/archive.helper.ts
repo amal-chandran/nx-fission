@@ -6,6 +6,7 @@ export const zipFolderContents = async (
   outputPath: string
 ) => {
   const output = fs.createWriteStream(outputPath);
+
   const archive = archiver('zip', {
     zlib: { level: 9 }, // Sets the compression level.
   });

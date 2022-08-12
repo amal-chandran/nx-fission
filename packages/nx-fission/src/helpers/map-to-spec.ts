@@ -22,7 +22,7 @@ export const mapToKubeSpec = ({ inputSpec, transformSpec }: MapToKubeSpec) => {
         if (has(inputSpec, specPath)) {
           return get(inputSpec, specPath);
         } else {
-          throw new Error('Path not found in args');
+          throw new Error(`Path not found in args:${specPath}`);
         }
       }
     }

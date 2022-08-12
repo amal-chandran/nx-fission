@@ -5,19 +5,19 @@ metadata:
   name: $name
   namespace: $fnNamespace
 spec:
-  InvokeStrategy:
-    ExecutionStrategy:
-      ExecutorType: $executortype
-      MaxScale: $maxscale
-      MinScale: $minscale
-      SpecializationTimeout: 120
-      TargetCPUPercent: 0
-    StrategyType: execution
+  invokeStrategy:
+    executionStrategy:
+      executorType: $executortype
+      maxScale: $maxscale
+      minScale: $minscale
+      specializationTimeout: 120
+      targetCPUPercent: 0
+    strategyType: execution
   concurrency: $concurrency
   environment:
     name: $environment
     namespace: $envNamespace
-  functionTimeout: $timeout
+  functionTimeout: $function-timeout
   idletimeout: $idletimeout
   package:
     functionName: $handler

@@ -15,3 +15,11 @@ query getFunction($function: String!) {
 mutation deleteFunction($function: String!) {
   deleteFunction(function: $function)
 }
+mutation createFunctions($object: V1FunctionInput!) {
+  createFunctions(v1FunctionInput: $object) {
+    uid
+    name
+    namespace
+    creationTimestamp
+  }
+}
