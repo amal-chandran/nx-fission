@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import shell from 'shelljs';
 import treeKill from 'tree-kill';
 
@@ -51,3 +51,14 @@ export const execCmdDetached = (commandString: string) => {
 
   return { kill, childProcess };
 };
+
+export const resolveOnCmdOut = (childProcess: ChildProcessWithoutNullStreams) =>
+  new Promise((resolve, reject) => {
+    childProcess.stdout.on('data', (chunk) => {
+      resolve(chunk);
+    });
+
+    childProcess.stderr.on('data', (chunk) => {
+      resolve(chunk);
+    });
+  });

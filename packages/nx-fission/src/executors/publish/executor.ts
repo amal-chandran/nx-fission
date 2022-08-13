@@ -10,8 +10,9 @@ import {
   functionTransform,
   httpTriggerTransform,
 } from '../../helpers/data-transform';
-import { execCmd, execCmdDetached } from '../../helpers/exec.helper';
-import { createKubeClient } from '../../helpers/k8s.helper';
+import { ExecuterException } from '../../helpers/exceptions.helper';
+import { execCmd } from '../../helpers/exec.helper';
+import { createKubeClient, createKubeProxy } from '../../helpers/k8s.helper';
 import { transformSDK } from '../../helpers/sdk.helper';
 import { getMeshSDK } from '../../mesh/.mesh';
 import {
@@ -28,127 +29,146 @@ export default async function (
   options: PublishExecutorSchema,
   context: ExecutorContext
 ) {
-  for await (const s of await runExecutor(
-    parseTargetString(get(options, 'buildTarget')),
-    {},
-    context
-  )) {
-    //
-  }
+  let childProcess: Awaited<
+    ReturnType<typeof createKubeProxy>
+  >['proxyChildProcess'];
 
-  const proxyChildProcess = execCmdDetached('kubectl -n fission proxy -p 8685');
+  try {
+    const { proxyChildProcess } = await createKubeProxy();
+    childProcess = proxyChildProcess;
+    for await (const s of await runExecutor(
+      parseTargetString(get(options, 'buildTarget')),
+      {},
+      context
+    )) {
+      //
+    }
 
-  const sdk = transformSDK(getMeshSDK());
+    const sdk = transformSDK(getMeshSDK());
 
-  const { k8sApi } = createKubeClient();
+    const { k8sApi } = createKubeClient();
 
-  const applicationName = context.projectName;
-  const appRoot = path.join(context.root, 'apps', applicationName);
-  const distPath = path.join(context.root, 'dist');
-  const distProjectPath = path.join(distPath, 'apps', applicationName);
-  const zipPath = path.join(distPath, `${applicationName}.zip`);
+    const applicationName = context.projectName;
+    const appRoot = path.join(context.root, 'apps', applicationName);
+    const distPath = path.join(context.root, 'dist');
+    const distProjectPath = path.join(distPath, 'apps', applicationName);
+    const zipPath = path.join(distPath, `${applicationName}.zip`);
 
-  await zipFolderContents(distProjectPath, zipPath);
+    await zipFolderContents(distProjectPath, zipPath);
 
-  const fissionConfigurationPath = path.join(appRoot, 'fission.yaml');
+    const fissionConfigurationPath = path.join(appRoot, 'fission.yaml');
 
-  const fissionConfigObject = yaml.load(
-    fs.readFileSync(fissionConfigurationPath, 'utf8')
-  );
+    const fissionConfigObject = yaml.load(
+      fs.readFileSync(fissionConfigurationPath, 'utf8')
+    );
 
-  if (has(fissionConfigObject, 'environment')) {
-    const globalEnvironment = get(fissionConfigObject, 'environment');
-    if (isArray(globalEnvironment)) {
-      for (const singleEnvironment of globalEnvironment) {
-        await createEnvironment(sdk, singleEnvironment);
+    if (has(fissionConfigObject, 'environment')) {
+      const globalEnvironment = get(fissionConfigObject, 'environment');
+      if (isArray(globalEnvironment)) {
+        for (const singleEnvironment of globalEnvironment) {
+          await createEnvironment(sdk, singleEnvironment);
+        }
+      } else {
+        await createEnvironment(sdk, globalEnvironment);
       }
-    } else {
-      await createEnvironment(sdk, globalEnvironment);
-    }
-  }
-
-  const functions = get(fissionConfigObject, 'function');
-  const defaultConfig = get(fissionConfigObject, 'default');
-
-  for (const functionName in functions) {
-    const functionConfig = await functionTransform(
-      functionName,
-      functions[functionName],
-      defaultConfig
-    );
-
-    const currentFunctionName = get(functionConfig, 'name');
-    const currentEnvironmentName = get(functionConfig, 'environment');
-
-    try {
-      await sdk.deleteFunction({ function: currentFunctionName });
-    } catch (error) {
-      // Nothing to handle
     }
 
-    try {
-      await sdk.deletePackage({ package: currentFunctionName });
-    } catch (error) {
-      console.log(error);
-      // Nothing to handle
-    }
+    const functions = get(fissionConfigObject, 'function');
+    const defaultConfig = get(fissionConfigObject, 'default');
 
-    execCmd(
-      `fission package create --src ${zipPath}  --env ${currentEnvironmentName} --name ${currentFunctionName}`
-    );
-
-    try {
-      await deleteEnvironmentVariables(k8sApi, functionConfig);
-    } catch (error) {
-      console.log(error);
-    }
-
-    try {
-      const { configMapName, secretMapName } = await createEnvironmentVariables(
-        k8sApi,
-        functionConfig,
+    for (const functionName in functions) {
+      const functionConfig = await functionTransform(
+        functionName,
+        functions[functionName],
         defaultConfig
       );
-      const fnNamespace = get(functionConfig, 'fnNamespace');
 
-      functionConfig['configmaps'] = [
-        { name: configMapName, namespace: fnNamespace },
-      ];
+      const currentFunctionName = get(functionConfig, 'name');
+      const currentEnvironmentName = get(functionConfig, 'environment');
 
-      functionConfig['secrets'] = [
-        { name: secretMapName, namespace: fnNamespace },
-      ];
-    } catch (error) {
-      // console.log(error);
-    }
+      try {
+        await sdk.deleteFunction({ function: currentFunctionName });
+      } catch (error) {
+        // Nothing to handle
+      }
 
-    await createFunction(sdk, functionConfig);
+      try {
+        await sdk.deletePackage({ package: currentFunctionName });
+      } catch (error) {
+        console.log(error);
+        // Nothing to handle
+      }
 
-    const functionEvents = get(functionConfig, 'event');
+      execCmd(
+        `fission package create --src ${zipPath}  --env ${currentEnvironmentName} --name ${currentFunctionName}`
+      );
 
-    for (const functionEvent of functionEvents) {
-      if (has(functionEvent, 'http')) {
-        const triggerData = get(functionEvent, 'http');
+      try {
+        await deleteEnvironmentVariables(k8sApi, functionConfig);
+      } catch (error) {
+        console.log(error);
+      }
 
-        const httpTriggerConfig = await httpTriggerTransform(
-          functionConfig,
-          triggerData
-        );
+      try {
+        const { configMapName, secretMapName } =
+          await createEnvironmentVariables(
+            k8sApi,
+            functionConfig,
+            defaultConfig
+          );
+        const fnNamespace = get(functionConfig, 'fnNamespace');
 
-        try {
-          await sdk.deleteHttp({ httpTrigger: get(httpTriggerConfig, 'name') });
-        } catch (error) {
-          //
+        functionConfig['configmaps'] = [
+          { name: configMapName, namespace: fnNamespace },
+        ];
+
+        functionConfig['secrets'] = [
+          { name: secretMapName, namespace: fnNamespace },
+        ];
+      } catch (error) {
+        // console.log(error);
+      }
+
+      await createFunction(sdk, functionConfig);
+
+      const functionEvents = get(functionConfig, 'event');
+
+      for (const functionEvent of functionEvents) {
+        if (has(functionEvent, 'http')) {
+          const triggerData = get(functionEvent, 'http');
+
+          const httpTriggerConfig = await httpTriggerTransform(
+            functionConfig,
+            triggerData
+          );
+
+          try {
+            await sdk.deleteHttp({
+              httpTrigger: get(httpTriggerConfig, 'name'),
+            });
+          } catch (error) {
+            //
+          }
+
+          await createHTTPTrigger(sdk, httpTriggerConfig);
         }
-
-        await createHTTPTrigger(sdk, httpTriggerConfig);
       }
     }
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    if (error instanceof ExecuterException) {
+      console.log(error.message);
+    } else {
+      console.log(error);
+    }
+
+    return {
+      success: false,
+    };
+  } finally {
+    childProcess?.kill();
   }
-
-  proxyChildProcess.kill();
-
-  return {
-    success: true,
-  };
 }
