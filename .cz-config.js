@@ -35,7 +35,7 @@ module.exports = {
     },
   ],
 
-  scopes: [{ name: 'stack' }, { name: 'lib' }],
+  scopes: [{ name: 'stack' }, { name: 'lib' }, { name: 'nx-fission' }],
 
   allowBreakingChanges: ['feat', 'fix'],
 };
