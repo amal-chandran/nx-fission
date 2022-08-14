@@ -68,7 +68,7 @@ export const deleteEnvironmentVariables = async (
   functionConfig: any
 ) => {
   const functionName = get(functionConfig, 'name');
-  const namespace = get(functionConfig, 'fnNamespace');
+  const namespace = get(functionConfig, 'functionNamespace');
 
   const configMapName = `${functionName}-config-map`;
   const secretMapName = `${functionName}-secret-map`;

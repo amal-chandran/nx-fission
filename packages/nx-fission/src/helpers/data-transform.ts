@@ -1,4 +1,12 @@
-import { defaultsDeep, fromPairs, get, has, isObject, toPairs } from 'lodash';
+import {
+  defaultsDeep,
+  fromPairs,
+  get,
+  has,
+  isObject,
+  set,
+  toPairs,
+} from 'lodash';
 
 export const functionTransform = async (
   handlerName: string,
@@ -13,13 +21,16 @@ export const functionTransform = async (
     extendedConfig['name'] = handlerName;
   }
 
+  set(extendedConfig, 'annotations.description', extendedConfig['description']);
+
   if (!has(extendedConfig, 'packageName')) {
     extendedConfig['packageName'] = get(extendedConfig, 'name');
   }
   // console.log('handlerData', handlerData);
   if (!has(extendedConfig, 'packageNamespace')) {
     extendedConfig['packageNamespace'] =
-      get(extendedConfig, 'fnNamespace') || get(extendedConfig, 'envNamespace');
+      get(extendedConfig, 'functionNamespace') ||
+      get(extendedConfig, 'environmentNamespace');
   }
 
   return extendedConfig;

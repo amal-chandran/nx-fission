@@ -4,6 +4,16 @@
   "title": "Publish a fission service",
   "description": "",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "stage": {
+      "type": "string",
+      "description": "stage where deployment happens",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What stage would you like to deploy?"
+    }
+  },
   "required": []
 }

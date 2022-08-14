@@ -2,7 +2,6 @@ apiVersion: fission.io/v1
 kind: Environment
 metadata:
   creationTimestamp: null
-  name: $name
   namespace: default
 spec:
   builder:
@@ -10,14 +9,12 @@ spec:
     container:
       name: ''
       resources: {}
-    image: $builder
   imagepullsecret: ''
   keeparchive: false
-  poolsize: $poolsize
+  poolsize: 4
   resources: {}
   runtime:
     container:
       name: ''
       resources: {}
-    image: $runtime
   version: 2

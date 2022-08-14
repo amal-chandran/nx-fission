@@ -3,28 +3,30 @@ kind: Function
 metadata:
   creationTimestamp: null
   name: $name
-  namespace: $fnNamespace
+  namespace: $functionNamespace
+  labels: $labels
+  annotations: $annotations
 spec:
   invokeStrategy:
     executionStrategy:
-      executorType: $executortype
-      maxScale: $maxscale
-      minScale: $minscale
-      specializationTimeout: 120
-      targetCPUPercent: 0
+      executorType: $executorType
+      maxScale: $maximumScale
+      minScale: $minimumScale
+      specializationTimeout: $specializationTimeout
+      targetCPUPercent: $targetCPUPercent
     strategyType: execution
   concurrency: $concurrency
   environment:
     name: $environment
-    namespace: $envNamespace
-  functionTimeout: $function-timeout
-  idletimeout: $idletimeout
+    namespace: $environmentNamespace
+  functionTimeout: $functionTimeout
+  idletimeout: $idleTimeout
   package:
     functionName: $handler
     packageref:
       name: $packageName
       namespace: $packageNamespace
-  requestsPerPod: $requestsperpod
+  requestsPerPod: $requestsPerPod
   resources: {}
-  configmaps: $configmaps
+  configmaps: $configMaps
   secrets: $secrets

@@ -9,12 +9,17 @@ import {
   offsetFromRoot,
   Tree,
 } from '@nrwl/devkit';
+import { getRelativePathToRootTsConfig } from '@nrwl/workspace/src/utilities/typescript';
 import { execSync } from 'child_process';
+import { get } from 'lodash';
 import * as path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import { runtimeBuilderMap } from '../../constants/fission.constants';
 import { NxFissionGeneratorSchema } from './schema';
-
 interface NormalizedSchema extends NxFissionGeneratorSchema {
   projectName: string;
+  builder: string;
+  environmentName: string;
   projectRoot: string;
   projectDirectory: string;
   parsedTags: string[];
@@ -24,15 +29,18 @@ function normalizeOptions(
   tree: Tree,
   options: NxFissionGeneratorSchema
 ): NormalizedSchema {
-  const name = names(options.name).fileName;
+  const projectName = names(options.name).fileName;
   const projectDirectory = options.directory
-    ? `${names(options.directory).fileName}/${name}`
-    : name;
-  const projectName = projectDirectory.replace(new RegExp('/', 'g'), '-');
+    ? `${names(options.directory).fileName}/${projectName}`
+    : projectName;
+
   const projectRoot = `${getWorkspaceLayout(tree).appsDir}/${projectDirectory}`;
   const parsedTags = options.tags
     ? options.tags.split(',').map((s) => s.trim())
     : [];
+
+  const builder = get(runtimeBuilderMap, options.runtime);
+  const environmentName = `${names(options.name).name}-${uuidv4()}`;
 
   return {
     ...options,
@@ -40,6 +48,8 @@ function normalizeOptions(
     projectRoot,
     projectDirectory,
     parsedTags,
+    environmentName,
+    builder,
   };
 }
 
@@ -49,7 +59,9 @@ function addFiles(tree: Tree, options: NormalizedSchema) {
     ...names(options.name),
     offsetFromRoot: offsetFromRoot(options.projectRoot),
     template: '',
+    rootTsConfigPath: getRelativePathToRootTsConfig(tree, options.projectRoot),
   };
+
   generateFiles(
     tree,
     path.join(__dirname, 'files'),
@@ -74,9 +86,9 @@ export default async function (tree: Tree, options: NxFissionGeneratorSchema) {
         executor: '@nrwl/node:webpack',
         outputs: ['{options.outputPath}'],
         options: {
-          outputPath: `dist/apps/${normalizedOptions.projectName}`,
-          main: `apps/${normalizedOptions.projectName}/src/handlers/main.ts`,
-          tsConfig: `apps/${normalizedOptions.projectName}/tsconfig.app.json`,
+          outputPath: `dist/apps/${normalizedOptions.projectDirectory}`,
+          main: `apps/${normalizedOptions.projectDirectory}/src/handlers/main.ts`,
+          tsConfig: `apps/${normalizedOptions.projectDirectory}/tsconfig.app.json`,
           buildableProjectDepsInPackageJsonType: 'dependencies',
           externalDependencies: 'none',
           generatePackageJson: true,
@@ -86,6 +98,8 @@ export default async function (tree: Tree, options: NxFissionGeneratorSchema) {
         executor: '@nx-fission/nx-fission:publish',
         options: {
           buildTarget: `${normalizedOptions.projectName}:build`,
+          outputPath: `dist/apps/${normalizedOptions.projectDirectory}`,
+          fissionConfig: `apps/${normalizedOptions.projectDirectory}/fission.yaml`,
         },
       },
       remove: {
@@ -95,14 +109,14 @@ export default async function (tree: Tree, options: NxFissionGeneratorSchema) {
         executor: '@nrwl/linter:eslint',
         outputs: ['{options.outputFile}'],
         options: {
-          lintFilePatterns: [`apps/${normalizedOptions.projectName}/**/*.ts`],
+          lintFilePatterns: [`apps/${normalizedOptions.projectRoot}/**/*.ts`],
         },
       },
       test: {
         executor: '@nrwl/jest:jest',
-        outputs: [`coverage/apps/${normalizedOptions.projectName}`],
+        outputs: [`coverage/apps/${normalizedOptions.projectDirectory}`],
         options: {
-          jestConfig: `apps/${normalizedOptions.projectName}/jest.config.ts`,
+          jestConfig: `apps/${normalizedOptions.projectDirectory}/jest.config.ts`,
           passWithNoTests: true,
         },
       },

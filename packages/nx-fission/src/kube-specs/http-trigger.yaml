@@ -3,7 +3,7 @@ kind: HTTPTrigger
 metadata:
   creationTimestamp: null
   name: $name
-  namespace: $fnNamespace
+  namespace: $functionNamespace
 spec:
   createingress: false
   functionref:

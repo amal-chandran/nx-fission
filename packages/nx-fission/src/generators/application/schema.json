@@ -23,6 +23,20 @@
       "type": "string",
       "description": "A directory where the project is placed",
       "alias": "d"
+    },
+
+    "runtime": {
+      "type": "string",
+      "description": "runtime environment used for lambda",
+      "x-prompt": "Which runtime would you like to use?",
+      "enum": [
+        "node-env",
+        "node-env-16",
+        "node-env-14",
+        "node-env-12.16",
+        "node-env-12"
+      ],
+      "default": "node-env"
     }
   },
   "required": ["name"]

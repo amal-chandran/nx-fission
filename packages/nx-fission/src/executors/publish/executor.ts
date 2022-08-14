@@ -49,14 +49,13 @@ export default async function (
     const { k8sApi } = createKubeClient();
 
     const applicationName = context.projectName;
-    const appRoot = path.join(context.root, 'apps', applicationName);
+
+    const fissionConfigurationPath = get(options, 'fissionConfig');
     const distPath = path.join(context.root, 'dist');
-    const distProjectPath = path.join(distPath, 'apps', applicationName);
+    const distProjectPath = get(options, 'outputPath');
     const zipPath = path.join(distPath, `${applicationName}.zip`);
 
     await zipFolderContents(distProjectPath, zipPath);
-
-    const fissionConfigurationPath = path.join(appRoot, 'fission.yaml');
 
     const fissionConfigObject = yaml.load(
       fs.readFileSync(fissionConfigurationPath, 'utf8')
@@ -88,15 +87,14 @@ export default async function (
 
       try {
         await sdk.deleteFunction({ function: currentFunctionName });
-      } catch (error) {
-        // Nothing to handle
+      } catch {
+        //
       }
 
       try {
         await sdk.deletePackage({ package: currentFunctionName });
       } catch (error) {
-        console.log(error);
-        // Nothing to handle
+        //
       }
 
       execCmd(
@@ -116,14 +114,14 @@ export default async function (
             functionConfig,
             defaultConfig
           );
-        const fnNamespace = get(functionConfig, 'fnNamespace');
+        const functionNamespace = get(functionConfig, 'functionNamespace');
 
         functionConfig['configmaps'] = [
-          { name: configMapName, namespace: fnNamespace },
+          { name: configMapName, namespace: functionNamespace },
         ];
 
         functionConfig['secrets'] = [
-          { name: secretMapName, namespace: fnNamespace },
+          { name: secretMapName, namespace: functionNamespace },
         ];
       } catch (error) {
         // console.log(error);
@@ -161,6 +159,8 @@ export default async function (
   } catch (error) {
     if (error instanceof ExecuterException) {
       console.log(error.message);
+    } else if (has(error, 'errors.0.extensions.responseBody')) {
+      console.log(get(error, 'errors.0.extensions.responseBody'));
     } else {
       console.log(error);
     }

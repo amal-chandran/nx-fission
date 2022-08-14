@@ -9,12 +9,15 @@ export const createEnvironment = async (sdk: MeshSDK, fissionSpec: any) => {
 
   try {
     await sdk.createEnvironments({ object: envInput });
+
     console.log(`Created new ${get(fissionSpec, 'name')} environment`);
   } catch (error) {
     if (get(error, 'message').includes('already exists')) {
       console.log(`Environment ${get(fissionSpec, 'name')} already exists`);
+      // throw new Error(`Environment ${get(fissionSpec, 'name')} already exists`);
     } else {
-      console.log('error', error);
+      console.log(error);
+      // throw error;
     }
   }
 };
@@ -25,15 +28,14 @@ export const createFunction = async (sdk: MeshSDK, fissionSpec: any) => {
   console.log(`Creating function ${get(fissionSpec, 'name')}`);
 
   try {
-    // console.log('envInput', envInput);
-    const functionResponse = await sdk.createFunctions({ object: envInput });
-    // console.log('functions', functionResponse);
+    await sdk.createFunctions({ object: envInput });
+
     console.log(`Created new ${get(fissionSpec, 'name')} function`);
   } catch (error) {
     if (get(error, 'message').includes('already exists')) {
-      console.log(`Function ${get(fissionSpec, 'name')} already exists`);
+      throw new Error(`Function ${get(fissionSpec, 'name')} already exists`);
     } else {
-      console.log('error', error);
+      throw error;
     }
   }
 };
@@ -44,14 +46,16 @@ export const createHTTPTrigger = async (sdk: MeshSDK, fissionSpec: any) => {
   console.log(`Creating http trigger ${get(fissionSpec, 'name')}`);
 
   try {
-    const functionResponse = await sdk.createHttp({ object: envInput });
-    // console.log('functions', functionResponse);
+    await sdk.createHttp({ object: envInput });
+
     console.log(`Created new ${get(fissionSpec, 'name')} http trigger`);
   } catch (error) {
     if (get(error, 'message').includes('already exists')) {
-      console.log(`HTTP Trigger ${get(fissionSpec, 'name')} already exists`);
+      throw new Error(
+        `HTTP Trigger ${get(fissionSpec, 'name')} already exists`
+      );
     } else {
-      console.log('error', error);
+      throw error;
     }
   }
 };

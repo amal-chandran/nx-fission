@@ -31,7 +31,8 @@
     "semver": "^7.3.5",
     "shelljs": "^0.8.4",
     "traverse": "^0.6.6",
-    "tree-kill": "^1.2.2"
+    "tree-kill": "^1.2.2",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@nrwl/cli": "14.4.0",
@@ -53,6 +54,7 @@
     "@types/lodash": "^4.14.182",
     "@types/node": "16.11.7",
     "@types/traverse": "^0.6.32",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
     "eslint": "~8.15.0",

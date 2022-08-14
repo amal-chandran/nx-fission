@@ -13,7 +13,7 @@ spec:
     image: $builder
   imagepullsecret: ''
   keeparchive: false
-  poolsize: $poolsize
+  poolsize: $poolSize
   resources: {}
   runtime:
     container:
