@@ -22,6 +22,7 @@ export const functionTransform = async (
   }
 
   set(extendedConfig, 'annotations.description', extendedConfig['description']);
+  set(extendedConfig, 'labels.stage', extendedConfig['stage']);
 
   if (!has(extendedConfig, 'packageName')) {
     extendedConfig['packageName'] = get(extendedConfig, 'name');

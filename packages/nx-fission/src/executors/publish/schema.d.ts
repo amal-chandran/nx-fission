@@ -1,1 +1,6 @@
-export interface PublishExecutorSchema {} // eslint-disable-line
+export interface PublishExecutorSchema {
+  stage: string;
+  buildTarget: string;
+  outputPath: string;
+  fissionConfig: string;
+}

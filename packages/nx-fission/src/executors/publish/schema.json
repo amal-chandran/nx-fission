@@ -12,6 +12,7 @@
         "$source": "argv",
         "index": 0
       },
+      "default": "development",
       "x-prompt": "What stage would you like to deploy?"
     }
   },
