@@ -8,10 +8,11 @@
       "schema": "./src/generators/application/schema.json",
       "description": "Create a fission application"
     },
-    "environment": {
-      "factory": "./src/generators/environment/generator",
-      "schema": "./src/generators/environment/schema.json",
-      "description": "Create fission environment"
+
+    "handler": {
+      "factory": "./src/generators/handler/generator",
+      "schema": "./src/generators/handler/schema.json",
+      "description": "Generate handler"
     }
   }
 }
