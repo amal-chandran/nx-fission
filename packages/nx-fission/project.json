@@ -54,6 +54,22 @@
         "jestConfig": "packages/nx-fission/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+
+    "deploy": {
+      "executor": "ngx-deploy-npm:deploy",
+      "options": {
+        "access": "public"
+      }
+    },
+    "publish": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "postTargets": ["nx-fission:deploy"],
+        "versionTagPrefix": "v",
+        "skipProjectChangelog": true,
+        "noVerify": true
+      }
     }
   },
   "tags": []
