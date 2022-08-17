@@ -9,5 +9,10 @@
     "mesh-start": "yarn graphql-mesh start",
     "mesh-dev": "yarn graphql-mesh dev",
     "mesh-build": "yarn graphql-mesh build"
+  },
+  "dependencies": {
+    "@graphql-mesh/cache-localforage": "0.6.16",
+    "fetchache": "0.1.2",
+    "@graphql-mesh/merger-stitching": "0.15.60"
   }
 }
