@@ -138,7 +138,9 @@ export default async function (tree: Tree, options: NxFissionGeneratorSchema) {
 
   addFiles(tree, normalizedOptions);
 
-  installPackagesTask(tree);
-
   await formatFiles(tree);
+
+  return () => {
+    installPackagesTask(tree);
+  };
 }
