@@ -77,8 +77,16 @@ export default async function (tree: Tree, options: NxFissionGeneratorSchema) {
   const normalizedOptions = normalizeOptions(tree, options);
 
   const currentNxVersion = execSync('nx --version') + '';
+  const currentNxVersionTrimmed = currentNxVersion.replace(
+    /(\r\n|\n|\r)/gm,
+    ''
+  );
 
-  addDependenciesToPackageJson(tree, {}, { '@nrwl/node': currentNxVersion });
+  addDependenciesToPackageJson(
+    tree,
+    {},
+    { '@nrwl/node': currentNxVersionTrimmed }
+  );
 
   addProjectConfiguration(tree, normalizedOptions.projectName, {
     root: normalizedOptions.projectRoot,
@@ -99,7 +107,7 @@ export default async function (tree: Tree, options: NxFissionGeneratorSchema) {
         },
       },
       publish: {
-        executor: '@nx-fission/nx-fission:publish',
+        executor: 'nx-fission:publish',
         options: {
           buildTarget: `${normalizedOptions.projectName}:build`,
           outputPath: `dist/apps/${normalizedOptions.projectDirectory}`,
