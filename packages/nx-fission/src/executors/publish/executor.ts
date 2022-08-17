@@ -38,7 +38,7 @@ export default async function (
     childProcess = proxyChildProcess;
     for await (const s of await runExecutor(
       parseTargetString(get(options, 'buildTarget')),
-      {},
+      { skipNxCache: true },
       context
     )) {
       //

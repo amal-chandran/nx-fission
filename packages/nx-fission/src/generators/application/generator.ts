@@ -18,6 +18,7 @@ import { runtimeBuilderMap } from '../../constants/fission.constants';
 import { NxFissionGeneratorSchema } from './schema';
 interface NormalizedSchema extends NxFissionGeneratorSchema {
   projectName: string;
+  handlerName: string;
   builder: string;
   environmentName: string;
   projectRoot: string;
@@ -41,6 +42,7 @@ function normalizeOptions(
 
   const builder = get(runtimeBuilderMap, options.runtime);
   const environmentName = `${names(options.name).name}-${uuidv4()}`;
+  const handlerName = names(options.handler).fileName;
 
   return {
     ...options,
@@ -50,6 +52,7 @@ function normalizeOptions(
     parsedTags,
     environmentName,
     builder,
+    handlerName,
   };
 }
 
@@ -87,11 +90,12 @@ export default async function (tree: Tree, options: NxFissionGeneratorSchema) {
         outputs: ['{options.outputPath}'],
         options: {
           outputPath: `dist/apps/${normalizedOptions.projectDirectory}`,
-          main: `apps/${normalizedOptions.projectDirectory}/src/handlers/main.ts`,
+          main: `apps/${normalizedOptions.projectDirectory}/src/handlers/${normalizedOptions.handlerName}.ts`,
           tsConfig: `apps/${normalizedOptions.projectDirectory}/tsconfig.app.json`,
           buildableProjectDepsInPackageJsonType: 'dependencies',
           externalDependencies: 'none',
           generatePackageJson: true,
+          outputFileName: `${normalizedOptions.handlerName}.js`,
         },
       },
       publish: {
@@ -102,24 +106,24 @@ export default async function (tree: Tree, options: NxFissionGeneratorSchema) {
           fissionConfig: `apps/${normalizedOptions.projectDirectory}/fission.yaml`,
         },
       },
-      remove: {
-        executor: '@nx-fission/nx-fission:remove',
-      },
-      lint: {
-        executor: '@nrwl/linter:eslint',
-        outputs: ['{options.outputFile}'],
-        options: {
-          lintFilePatterns: [`apps/${normalizedOptions.projectRoot}/**/*.ts`],
-        },
-      },
-      test: {
-        executor: '@nrwl/jest:jest',
-        outputs: [`coverage/apps/${normalizedOptions.projectDirectory}`],
-        options: {
-          jestConfig: `apps/${normalizedOptions.projectDirectory}/jest.config.ts`,
-          passWithNoTests: true,
-        },
-      },
+      // remove: {
+      //   executor: '@nx-fission/nx-fission:remove',
+      // },
+      // lint: {
+      //   executor: '@nrwl/linter:eslint',
+      //   outputs: ['{options.outputFile}'],
+      //   options: {
+      //     lintFilePatterns: [`apps/${normalizedOptions.projectRoot}/**/*.ts`],
+      //   },
+      // },
+      // test: {
+      //   executor: '@nrwl/jest:jest',
+      //   outputs: [`coverage/apps/${normalizedOptions.projectDirectory}`],
+      //   options: {
+      //     jestConfig: `apps/${normalizedOptions.projectDirectory}/jest.config.ts`,
+      //     passWithNoTests: true,
+      //   },
+      // },
     },
     tags: normalizedOptions.parsedTags,
   });

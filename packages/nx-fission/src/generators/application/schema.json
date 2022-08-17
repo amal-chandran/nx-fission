@@ -14,6 +14,12 @@
       },
       "x-prompt": "What name would you like to use?"
     },
+    "handler": {
+      "type": "string",
+      "description": "",
+      "default": "main",
+      "x-prompt": "What handle name would you like to use?"
+    },
     "tags": {
       "type": "string",
       "description": "Add tags to the project (used for linting)",
@@ -39,5 +45,5 @@
       "default": "node-env"
     }
   },
-  "required": ["name"]
+  "required": ["name", "handler"]
 }

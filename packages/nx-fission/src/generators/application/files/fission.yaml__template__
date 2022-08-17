@@ -1,8 +1,8 @@
 environment:
   - name: <%= environmentName %>
-    runtime: <%= runtime %>
+    runtime: fission/<%= runtime %>
     poolSize: 4
-    builder: <%= builder %>
+    builder: fission/<%= builder %>
 
 environment-variables:
   SAMPLE_CONFIG: ENV_NAME
@@ -24,14 +24,14 @@ default:
   concurrency: 500
   requestsPerPod: 1
 function:
-  <%= name %>:
-    handler: main.handler
+  <%= handlerName %>:
+    handler: <%= handlerName %>.handler
     event:
       - http:
-          url: /<%= name %>
+          url: /<%= handlerName %>
           methods: [GET, POST, PUT, PATCH]
-    name: <%= name %>
-    description: My <%= name %> function
+    name: <%= handlerName %>
+    description: My <%= handlerName %> function
     # environment: <%= environmentName %>
     labels:
       environment: dev
