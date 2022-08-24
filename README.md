@@ -9,6 +9,15 @@ Building and publishing to the fission cluster.
 
 ## Install
 
+Create nx workspace
+
+```
+npx create-nx-workspace@14.5.6 --preset=apps
+
+```
+
+Install nx-fission to workspace
+
 ```
 npm i -D nx-fission
 ```
